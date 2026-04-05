@@ -36,9 +36,7 @@ function App() {
       setGameResult(null);
       setStatusSync("connecting");
 
-      const client = new Client("defaultkey", "localhost", "7350");
-
-      // ✅ Always fresh deviceId = always fresh account = username always matches
+      const client = new Client("defaultkey", "tic-tac-toe-production-cf31.up.railway.app", "443", true);
       const deviceId = crypto.randomUUID();
       const session = await client.authenticateDevice(deviceId, true, username);
 

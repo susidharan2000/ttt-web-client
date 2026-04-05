@@ -1,86 +1,129 @@
-# Tic Tac Toe — Web Client
+# Tic Tac Toe — Multiplayer (Server Authoritative)
 
-A real-time multiplayer Tic Tac Toe game built with React and Nakama.
+A real-time multiplayer Tic Tac Toe game built using **React** and **Nakama**, with a **server-authoritative architecture** to ensure correctness and prevent cheating.
+
+---
 
 ## Tech Stack
 
-- React + Vite
-- Nakama JS SDK (@heroiclabs/nakama-js)
-- Deployed on Vercel
+- React + Vite  
+- Nakama JS SDK (@heroiclabs/nakama-js)  
+- Go (Nakama match handler)  
+- Vercel (Frontend deployment)  
+
+---
 
 ## Features
 
-- Real-time multiplayer via Nakama WebSocket
-- Automatic matchmaking
-- Turn timer (30 seconds per turn)
-- Player names displayed in game
-- Turn timeout auto-switches to opponent
-- Win / Draw / Opponent left detection
-- Exit button to leave match
+- Real-time multiplayer via WebSocket  
+- Server-authoritative game logic  
+- Automatic matchmaking  
+- Turn-based validation  
+- 30-second turn timer (server enforced)  
+- Timer synced with client UI  
+- Player names display  
+- Win / Draw / Opponent left handling  
+- Exit match support  
+
+---
+
+## Architecture
+
+```
+Client (React)
+   ↓ WebSocket
+Nakama Server
+   ↓
+Match Handler (Go)
+```
+
+---
 
 ## Project Structure
 
+```
 src/
-├── App.jsx        # Root component, Nakama connection, game state
-├── LobbyPage.jsx  # Username input and matchmaking screen
-├── GamePage.jsx   # Game board, player info, result screen
-├── TimerBar.jsx   # Countdown timer synced with server
-└── main.jsx       # React entry point
+├── App.jsx
+├── LobbyPage.jsx
+├── GamePage.jsx
+├── TimerBar.jsx
+└── main.jsx
+```
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- A running Nakama server (local or remote)
+- Nakama server running (local or remote)
+
+---
 
 ### Install
 
+```bash
 npm install
+```
 
-### Run locally
+---
 
+### Run Locally
+
+```bash
 npm run dev
+```
 
-Make sure Nakama is running on localhost:7350 with defaultkey.
+Make sure Nakama is running on:
+
+```
+localhost:7350
+server key: defaultkey
+```
+
+---
 
 ### Build
 
+```bash
 npm run build
+```
+
+---
 
 ## Environment Variables
 
-Create a .env file to point to a remote Nakama server:
+Create a `.env` file:
 
+```
 VITE_NAKAMA_KEY=defaultkey
-VITE_NAKAMA_HOST=your-server-ip
+VITE_NAKAMA_HOST=localhost
 VITE_NAKAMA_PORT=7350
 VITE_NAKAMA_SSL=false
+```
 
-Then update App.jsx:
-
-const client = new Client(
-  import.meta.env.VITE_NAKAMA_KEY ?? "defaultkey",
-  import.meta.env.VITE_NAKAMA_HOST ?? "localhost",
-  import.meta.env.VITE_NAKAMA_PORT ?? "7350",
-  import.meta.env.VITE_NAKAMA_SSL === "true"
-);
+---
 
 ## Opcode Reference
 
-| Opcode | Direction          | Description                        |
-|--------|--------------------|------------------------------------|
-| 1      | Client → Server    | Player move { row, col }           |
-| 10     | Server → Client    | Move applied, board update         |
-| 20     | Server → Client    | Game over, winner declared         |
-| 30     | Server → Client    | Draw                               |
-| 40     | Server → Client    | Opponent left, you win             |
-| 50     | Server → Client    | Match init, role and board state   |
-| 60     | Server → Client    | Turn timeout, turn switched        |
+| Opcode | Direction         | Description        |
+|--------|------------------|--------------------|
+| 1      | Client → Server  | Player move        |
+| 10     | Server → Client  | Move applied       |
+| 20     | Server → Client  | Game won           |
+| 30     | Server → Client  | Draw               |
+| 40     | Server → Client  | Opponent left      |
+| 50     | Server → Client  | Match init         |
+| 60     | Server → Client  | Timeout            |
+
+---
 
 ## Deployment
 
-Deployed on Vercel. Every push to main triggers a new production deployment.
-
+```bash
 npm run build
 vercel --prod
+```
+
+Frontend deployed on Vercel. Backend runs on Nakama server.
