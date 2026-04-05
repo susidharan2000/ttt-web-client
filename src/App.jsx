@@ -36,7 +36,12 @@ function App() {
       setGameResult(null);
       setStatusSync("connecting");
 
-      const client = new Client("defaultkey", "tic-tac-toe-production-cf31.up.railway.app", "443", true);
+      const client = new Client(
+        import.meta.env.VITE_NAKAMA_KEY,
+        import.meta.env.VITE_NAKAMA_HOST,
+        import.meta.env.VITE_NAKAMA_PORT,
+        import.meta.env.VITE_NAKAMA_SSL === "true"
+      );
       const deviceId = crypto.randomUUID();
       const session = await client.authenticateDevice(deviceId, true, username);
 
