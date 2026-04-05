@@ -35,23 +35,12 @@ function App() {
       setPlayerRoleSync(null);
       setGameResult(null);
       setStatusSync("connecting");
-      // console.log("ENV:", import.meta.env);
-      // const client = new Client(
-      //   import.meta.env.VITE_NAKAMA_KEY,
-      //   import.meta.env.VITE_NAKAMA_HOST,
-      //   import.meta.env.VITE_NAKAMA_PORT,
-      //   import.meta.env.VITE_NAKAMA_SSL === "true"
-      // );
-      const client = new Client(
-        "defaultkey",
-        "tic-tac-toe-production-cf31.up.railway.app",
-        "443",
-        true 
-      );
+
+      const client = new Client("defaultkey", "tic-tac-toe-production-cf31.up.railway.app", "443", true);
       const deviceId = crypto.randomUUID();
       const session = await client.authenticateDevice(deviceId, true, username);
 
-      const sock = client.createSocket();
+      const sock = client.createSocket(true);
       await sock.connect(session, true);
 
       socketRef.current = sock;
