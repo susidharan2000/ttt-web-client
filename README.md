@@ -1,16 +1,86 @@
-# React + Vite
+# Tic Tac Toe — Web Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time multiplayer Tic Tac Toe game built with React and Nakama.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React + Vite
+- Nakama JS SDK (@heroiclabs/nakama-js)
+- Deployed on Vercel
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Real-time multiplayer via Nakama WebSocket
+- Automatic matchmaking
+- Turn timer (30 seconds per turn)
+- Player names displayed in game
+- Turn timeout auto-switches to opponent
+- Win / Draw / Opponent left detection
+- Exit button to leave match
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+src/
+├── App.jsx        # Root component, Nakama connection, game state
+├── LobbyPage.jsx  # Username input and matchmaking screen
+├── GamePage.jsx   # Game board, player info, result screen
+├── TimerBar.jsx   # Countdown timer synced with server
+└── main.jsx       # React entry point
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- A running Nakama server (local or remote)
+
+### Install
+
+npm install
+
+### Run locally
+
+npm run dev
+
+Make sure Nakama is running on localhost:7350 with defaultkey.
+
+### Build
+
+npm run build
+
+## Environment Variables
+
+Create a .env file to point to a remote Nakama server:
+
+VITE_NAKAMA_KEY=defaultkey
+VITE_NAKAMA_HOST=your-server-ip
+VITE_NAKAMA_PORT=7350
+VITE_NAKAMA_SSL=false
+
+Then update App.jsx:
+
+const client = new Client(
+  import.meta.env.VITE_NAKAMA_KEY ?? "defaultkey",
+  import.meta.env.VITE_NAKAMA_HOST ?? "localhost",
+  import.meta.env.VITE_NAKAMA_PORT ?? "7350",
+  import.meta.env.VITE_NAKAMA_SSL === "true"
+);
+
+## Opcode Reference
+
+| Opcode | Direction          | Description                        |
+|--------|--------------------|------------------------------------|
+| 1      | Client → Server    | Player move { row, col }           |
+| 10     | Server → Client    | Move applied, board update         |
+| 20     | Server → Client    | Game over, winner declared         |
+| 30     | Server → Client    | Draw                               |
+| 40     | Server → Client    | Opponent left, you win             |
+| 50     | Server → Client    | Match init, role and board state   |
+| 60     | Server → Client    | Turn timeout, turn switched        |
+
+## Deployment
+
+Deployed on Vercel. Every push to main triggers a new production deployment.
+
+npm run build
+vercel --prod
